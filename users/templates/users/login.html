@@ -1,0 +1,26 @@
+{% extends "dashboard/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+    <div class="content-section">
+        <div class="border rounded container m-4 p-4 col-8 mx-auto">
+            <form action="" method="post">
+                {% csrf_token %}
+                <fieldset class="form-group mt-2">
+                    <legend class="border-bottom mb-4">Patient Log-In</legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group">
+                    <input type="submit" class="btn btn-primary">
+                </div>
+            </form>
+            <div class="border-top pt-3">
+                <small class="text-muted">
+                    Need an Account? <a href="{% url 'register' %}" class="ml-2">Sign-up Now.</a>
+                </small><br>
+                <small class="text-muted">
+                    Are you a Doctor? <a href="{% url 'doctor-login' %}" class="ml-2">Doctor's Login is Here.</a>
+                </small>
+            </div>
+        </div>
+    </div>
+{% endblock %}

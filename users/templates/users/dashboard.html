@@ -1,0 +1,9 @@
+{% extends "dashboard/base.html"%}
+{% block content %}
+    <h1>User Data</h1>
+    <img src="{{ user.profile.image.url }}" alt="">
+    <p>{{ user.username }}</p>
+    <p>{{ user.email }}</p>
+    <p>{{ user.first_name }}{{ user.last_name }}</p>
+    <p>{{ user.address }}</p>
+{% endblock %}
