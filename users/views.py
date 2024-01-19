@@ -27,7 +27,7 @@ def register_doctor(request):
             image = form.cleaned_data.get('image')
             user = User.objects.filter(username=username).first()
             user.profile.is_doctor = True
-            user.profile.image = image
+            # user.profile.image = image
             user.profile.save()
             messages.success(request, 'Doctor Account Created')
             return redirect('login')
