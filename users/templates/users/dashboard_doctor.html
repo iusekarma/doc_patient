@@ -1,0 +1,35 @@
+{% extends "dashboard/base.html"%}
+{% block content %}
+<div class="content-section mt-4">
+    <div class="mb-4">
+        <a href="{% url 'logout' %}" style="float:right;">Log-out</a>
+        <h1>Your Blogs</h1>
+    </div>
+    {% for post in posts %}
+    <div class="card mb-3">
+        <div class="row g-0">
+            <div class="col-md-2">
+                <img src="{{ post.image.url }}" class="img-fluid rounded-start">
+            </div>
+            <div class="col-md-10">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text blog-summary">{{ post.summary }}</p>
+                    {% if post.draft %}
+                    <p class="card-text"><small class="text-danger">Draft</small></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <a href="{% url 'create-blog' %}" class="position-fixed bottom-0 end-0 m-5"
+        style="box-shadow: 0px 0px 10px;border-radius: 100%;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor"
+            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+            <path
+                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
+        </svg>
+    </a>
+</div>
+{% endblock %}
