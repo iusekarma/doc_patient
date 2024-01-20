@@ -7,17 +7,17 @@
     </div>
     {% for post in posts %}
     <div class="card mb-3">
-        <div class="row g-0">
+        <div class="row g-0" style="max-height: 100px;overflow-y: hidden;">
             <div class="col-md-2">
                 <img src="{{ post.image.url }}" class="img-fluid rounded-start">
             </div>
             <div class="col-md-10">
                 <div class="card-body">
                     <h5 class="card-title">{{ post.title }}</h5>
-                    <p class="card-text blog-summary">{{ post.summary }}</p>
                     {% if post.draft %}
-                    <p class="card-text"><small class="text-danger">Draft</small></p>
+                        <small class="text-danger" style="float:right">Draft</small>
                     {% endif %}
+                    <p class="card-text blog-summary">{{ post.summary }}</p>
                 </div>
             </div>
         </div>

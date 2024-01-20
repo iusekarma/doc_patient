@@ -21,13 +21,6 @@
                 <input type="submit" class="btn btn-primary">
             </div>
         </form>
-        <div class="border-top pt-3">
-            <small class="text-muted">
-                Already have an Account?
-                {% if form_name == 'Doctor' %}<a href="{% url 'doctor-login' %}" class="ml-2">Click Here.</a>{% else
-                %}<a href="{% url 'login' %}" class="ml-2">Click Here.</a>{% endif %}
-            </small>
-        </div>
     </div>
 </div>
 {% endblock %}
