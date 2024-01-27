@@ -66,6 +66,7 @@ def google_oauth_consent(request):
 from django.http import HttpResponse, HttpResponseRedirect
 from google.oauth2 import credentials
 from google_auth_oauthlib.flow import Flow
+from googleapiclient.discovery import build
 from datetime import datetime
 
 
