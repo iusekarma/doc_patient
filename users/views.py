@@ -64,8 +64,9 @@ def google_oauth_consent(request):
 
 
 from django.http import HttpResponse, HttpResponseRedirect
-from google.oauth2.credentials import Credentials
+from google.oauth2 import credentials
 from google_auth_oauthlib.flow import Flow
+from datetime import datetime
 
 
 def handle_google_auth_callback(request):
@@ -105,7 +106,7 @@ def handle_google_auth_callback(request):
     user = request.user
     user.profile.google_calendar_credentials = json.dumps(credentials_to_dict(credentials))
     
-    user.save()
+    user.profile.save()
 
     return redirect('login')
 
@@ -127,7 +128,7 @@ def add_event_to_calendar(request):
         if form.is_valid():
             date = form.cleaned_data['date']
             time = form.cleaned_data['time']
-            datetime = date + time
+            date_and_time = datetime.combine(date, time)
             
             user_credentials = credentials.Credentials(**json.loads(request.user.google_calendar_credentials))
             service = build('calendar', 'v3', credentials=user_credentials)
@@ -136,11 +137,11 @@ def add_event_to_calendar(request):
                 'summary': 'Event Summary',
                 'description': 'Event Description',
                 'start': {
-                    'dateTime': date.strftime('%Y-%m-%dT%H:%M:%S'),
+                    'dateTime': date_and_time.strftime('%Y-%m-%dT%H:%M:%S'),
                     'timeZone': 'Your Time Zone',
                 },
                 'end': {
-                    'dateTime': (date + datetime.timedelta(minutes=45)).strftime('%Y-%m-%dT%H:%M:%S'),
+                    'dateTime': (date_and_time + datetime.timedelta(minutes=45)).strftime('%Y-%m-%dT%H:%M:%S'),
                     'timeZone': 'Your Time Zone',
                 },
             }
