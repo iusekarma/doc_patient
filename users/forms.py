@@ -22,3 +22,13 @@ class PostCreationForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title','category','image','summary','content','draft']
+        
+
+CATEGORY_CHOICES = (
+    ('1','Mental Health'), ('2','Heart Disease'), ('3','Covid19'), ('4','Immunization'), ('5','Others')
+)
+
+class EventForm(forms.Form):
+    speciality = forms.ChoiceField(choices=CATEGORY_CHOICES)
+    date = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type':'date'}))
+    time = forms.TimeField(widget=forms.TextInput(attrs={'class': 'form-control', 'type':'time'}))
