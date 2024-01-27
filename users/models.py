@@ -7,7 +7,7 @@ class Profile(models.Model):
     address = models.CharField(max_length=200, default='Nil')
     image = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics')
     is_doctor = models.BooleanField(default=False)
-    google_calendar_credentials = models.JSONField(null=True, blank=True)
+    google_calendar_credentials = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return f'{self.user.username} Profile'
