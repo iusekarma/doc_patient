@@ -7,16 +7,11 @@ class UserRegisterationForm(UserCreationForm):
     email = forms.EmailField()
     username = forms.CharField()
     address = forms.CharField()
-    # image = forms.ImageField()
+    image = forms.ImageField(required=False)
     
     class Meta:
         model = User
         fields = ['username','email','password1','password2','first_name','last_name','address']
-        
-# class UserImageForm(forms.ModelForm):
-#     class Meta:
-#         model = Profile
-#         fields = ['image']
 
 class PostCreationForm(forms.ModelForm):
     class Meta:

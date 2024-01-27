@@ -4,8 +4,11 @@ from .forms import UserRegisterationForm, PostCreationForm, EventForm
 from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from .models import Post
-import json
+from .models import Post, Profile
+import json, os
+
+CALENDER_API_ID = os.getenv('CALENDER_API_ID')
+CALENDER_API_SECRET = os.getenv('CALENDER_API_SECRET')
 
 
 def register(request):
@@ -22,16 +25,16 @@ def register(request):
 
 def register_doctor(request):
     if request.method == 'POST':
-        form = UserRegisterationForm(request.POST)
+        form = UserRegisterationForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             image = form.cleaned_data.get('image')
             user = User.objects.filter(username=username).first()
             user.profile.is_doctor = True
-            # user.profile.image = image
+            user.profile.image = image
             user.profile.save()
-            login(user)
+            login(request,user)
             messages.success(request, 'Doctor Account Created')
             return redirect('google-oauth-consent')
     else:
@@ -42,18 +45,8 @@ from urllib.parse import urlencode
 
 def google_oauth_consent(request):
     
-# /
-# /
-# /
-# /
-# Delete client_id and client_secret
-# /
-# /
-# /
-# /
-
     oauth_params = {
-        'client_id': '183564931585-59djjlhq6ll288ukd5gngir0a51v3r3h.apps.googleusercontent.com',
+        'client_id': CALENDER_API_ID,
         'redirect_uri': 'https://iusekarma.pythonanywhere.com/oauth-completion/',
         'scope': 'https://www.googleapis.com/auth/calendar',
         'response_type': 'code',
@@ -67,7 +60,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from google.oauth2 import credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def handle_google_auth_callback(request):
@@ -76,20 +69,10 @@ def handle_google_auth_callback(request):
 
     auth_code = request.GET.get('code')
 
-# /
-# /
-# /
-# /
-# Delete client_id and client_secret
-# /
-# /
-# /
-# /
-
     client_config = {
         'web': {
-            'client_id': '183564931585-59djjlhq6ll288ukd5gngir0a51v3r3h.apps.googleusercontent.com',
-            'client_secret': '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',
+            'client_id': CALENDER_API_ID,
+            'client_secret': CALENDER_API_SECRET,
             'redirect_uris': [redirect_uri],
             'auth_uri': 'https://accounts.google.com/o/oauth2/auth',
             'token_uri': 'https://oauth2.googleapis.com/token',
@@ -123,27 +106,37 @@ def credentials_to_dict(credentials):
 
 
 @login_required
-def add_event_to_calendar(request):
+def list_doctors(request):
+    context = {
+        'doctors' : Profile.objects.filter(is_doctor=True).all()
+    }
+    return render(request, 'users/list_doctors.html', context)
+
+
+@login_required
+def add_event_to_calendar(request, doctor_username):
     if request.method == 'POST':
         form = EventForm(request.POST)
         if form.is_valid():
+            speciality = form.cleaned_data['speciality']
             date = form.cleaned_data['date']
             time = form.cleaned_data['time']
             date_and_time = datetime.combine(date, time)
             
-            user_credentials = credentials.Credentials(**json.loads(request.user.google_calendar_credentials))
+            doctor = User.objects.filter(username=doctor_username).first()
+            user_credentials = credentials.Credentials(**json.loads(doctor.profile.google_calendar_credentials))
             service = build('calendar', 'v3', credentials=user_credentials)
 
             event = {
-                'summary': 'Event Summary',
-                'description': 'Event Description',
+                'summary': f'Appointment',
+                'description': f'An appoitment by patient {request.user.username} for speciality : {speciality}',
                 'start': {
                     'dateTime': date_and_time.strftime('%Y-%m-%dT%H:%M:%S'),
-                    'timeZone': 'Your Time Zone',
+                    'timeZone': 'Asia/Kolkata',
                 },
                 'end': {
-                    'dateTime': (date_and_time + datetime.timedelta(minutes=45)).strftime('%Y-%m-%dT%H:%M:%S'),
-                    'timeZone': 'Your Time Zone',
+                    'dateTime': (date_and_time + timedelta(minutes=45)).strftime('%Y-%m-%dT%H:%M:%S'),
+                    'timeZone': 'Asia/Kolkata',
                 },
             }
 

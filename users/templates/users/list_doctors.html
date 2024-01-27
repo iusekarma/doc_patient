@@ -1,0 +1,22 @@
+{% extends "dashboard/base.html"%}
+{% block content %}
+<div class="content-section mt-4">
+    <div class="mb-4">
+        <a href="{% url 'logout' %}" style="float:right;">Log-out</a>
+        <h1>All Doctors</h1>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for doctor in doctors %}
+        <div class="col">
+            <div class="card h-100" style="width: 18rem;">
+                <img src="{{ doctor.image.url }}" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</h5>
+                    <a href="{% url 'add-event' doctor_username=doctor.user.username %}" class="btn btn-primary">Book Appointment</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

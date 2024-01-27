@@ -16,7 +16,8 @@ urlpatterns = [
     path('logout/', user_views.user_logout, name='logout'),
     path('google_oauth_consent/', user_views.google_oauth_consent, name='google-oauth-consent'),
     path('oauth-completion/', user_views.handle_google_auth_callback, name='oauth-completion'),
-    path('add_event/', user_views.add_event_to_calendar, name='add-event'),
+    path('add_event/', user_views.list_doctors, name='list-doctors'),
+    path('add_event/<str:doctor_username>', user_views.add_event_to_calendar, name='add-event'),
 ]
 
 if settings.DEBUG:
