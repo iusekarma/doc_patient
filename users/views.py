@@ -56,7 +56,7 @@ def google_oauth_consent(request):
     return redirect(oauth_url)
 
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from google.oauth2 import credentials
 from google_auth_oauthlib.flow import Flow
 from googleapiclient.discovery import build
@@ -142,9 +142,11 @@ def add_event_to_calendar(request, doctor_username):
 
             try:
                 event = service.events().insert(calendarId='primary', body=event).execute()
-                return HttpResponse('Event created: %s' % (event.get('htmlLink')))
+                messages.success(request, 'Event created: %s' % (event.get('htmlLink')))
+                return redirect('dashboard')
             except Exception as e:
-                return HttpResponse('Error: %s' % str(e))
+                messages.error(request, 'Error: %s' % str(e))
+                return redirect('dashboard')
     else:
         form = EventForm()
     return render(request, 'users/add_event.html', {'form': form})
