@@ -5,6 +5,7 @@ from django.contrib.auth import logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Post
+import json
 
 
 def register(request):
@@ -53,7 +54,7 @@ def google_oauth_consent(request):
 
     oauth_params = {
         'client_id': '183564931585-59djjlhq6ll288ukd5gngir0a51v3r3h.apps.googleusercontent.com',
-        'redirect_uri': 'https://iusekarma.pythonanywhere.com/oauth-completion',
+        'redirect_uri': 'https://iusekarma.pythonanywhere.com/oauth-completion/',
         'scope': 'https://www.googleapis.com/auth/calendar',
         'response_type': 'code',
     }
@@ -69,7 +70,7 @@ from google_auth_oauthlib.flow import Flow
 
 def handle_google_auth_callback(request):
     
-    redirect_uri = 'https://iusekarma.pythonanywhere.com/oauth-completion'
+    redirect_uri = 'https://iusekarma.pythonanywhere.com/oauth-completion/'
 
     auth_code = request.GET.get('code')
 
@@ -102,7 +103,8 @@ def handle_google_auth_callback(request):
     credentials = flow.credentials
 
     user = request.user
-    user.google_calendar_credentials = credentials_to_dict(credentials)
+    user.profile.google_calendar_credentials = json.dumps(credentials_to_dict(credentials))
+    
     user.save()
 
     return redirect('login')
@@ -127,7 +129,7 @@ def add_event_to_calendar(request):
             time = form.cleaned_data['time']
             datetime = date + time
             
-            user_credentials = credentials.Credentials(**request.user.google_calendar_credentials)
+            user_credentials = credentials.Credentials(**json.loads(request.user.google_calendar_credentials))
             service = build('calendar', 'v3', credentials=user_credentials)
 
             event = {
